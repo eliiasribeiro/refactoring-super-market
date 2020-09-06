@@ -3,6 +3,7 @@ package dojo.supermarket.model;
 import java.util.Objects;
 
 public class Product {
+
     private final String name;
     private final ProductUnit unit;
 
@@ -14,7 +15,6 @@ public class Product {
     public String getName() {
         return name;
     }
-
 
     public ProductUnit getUnit() {
         return unit;

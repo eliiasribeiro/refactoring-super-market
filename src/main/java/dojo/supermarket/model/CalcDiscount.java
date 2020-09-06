@@ -1,6 +1,7 @@
 package dojo.supermarket.model;
 
 public class CalcDiscount {
+
     private final double quantity;
     private final double unitPrice;
     private double argument;
@@ -13,12 +14,12 @@ public class CalcDiscount {
         this.argument = argument;
     }
 
-    public CalcDiscount(double quantity, double unitPrice, double argument,int x, int quantityAsint) {
+    public CalcDiscount(double quantity, double unitPrice, double argument,int x) {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.argument = argument;
         this.x = x;
-        this.argument = quantityAsint;
+        this.quantityAsint = (int)quantity;
     }
 
     public CalcDiscount(double quantity, double unitPrice) {
@@ -49,4 +50,5 @@ public class CalcDiscount {
     public int calcNumberOfXs(){
         return getQuantityAsint() / getX();
     }
+
 }

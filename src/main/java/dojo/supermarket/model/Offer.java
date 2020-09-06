@@ -1,6 +1,7 @@
 package dojo.supermarket.model;
 
 public class Offer {
+
     private final SpecialOfferType offerType;
     private final Product product;
     private final double argument;

@@ -5,18 +5,14 @@ import java.util.stream.Stream;
 
 public enum SpecialOfferType  {
 
-
     ThreeForTwo(3,"3 for 2", new ThreeForTwoDiscountCalculator()),
     TenPercentDiscount(10,"% off", new TenPercentDiscountCalculator()),
     TwoForAmount(2, "2 for ",new TwoForAmountCalculator()),
     FiveForAmount(5," for ", new FiveForAmountCalculator());
 
-
     private final int offerNumber;
     private final SpecialOfferCalculator specialOfferCalculator;
     private final String description;
-
-
 
     SpecialOfferType(int offerNumber, String description,SpecialOfferCalculator specialOfferCalculator) {
         this.offerNumber = offerNumber;
@@ -27,7 +23,6 @@ public enum SpecialOfferType  {
     public int getOfferNumber() {
         return offerNumber;
     }
-
 
     public static Optional<SpecialOfferType> findByCommand(SpecialOfferType type){
         return Stream.of(SpecialOfferType.values()).filter(type::equals).findFirst();

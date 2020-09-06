@@ -1,6 +1,7 @@
 package dojo.supermarket.model;
 
 public class Discount {
+
     private final String description;
     private final double discountAmount;
     private final Product product;

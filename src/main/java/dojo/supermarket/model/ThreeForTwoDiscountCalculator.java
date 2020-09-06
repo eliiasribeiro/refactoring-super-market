@@ -2,9 +2,6 @@ package dojo.supermarket.model;
 
 public class ThreeForTwoDiscountCalculator implements SpecialOfferCalculator {
 
-
-    public ThreeForTwoDiscountCalculator(){}
-
     @Override
     public double calculatorDiscount(CalcDiscount calcDiscount) {
         int x = calcDiscount.calcNumberOfXs();

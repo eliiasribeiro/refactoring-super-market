@@ -3,6 +3,7 @@ package dojo.supermarket.model;
 import java.util.Objects;
 
 public class ReceiptItem {
+
     private final Product product;
     private final Item item;
 

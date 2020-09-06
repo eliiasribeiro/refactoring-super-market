@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Receipt {
+
     private final List<ReceiptItem> items = new ArrayList<>();
     private final List<Discount> discounts = new ArrayList<>();
     private double total;
