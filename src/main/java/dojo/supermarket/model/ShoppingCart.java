@@ -6,9 +6,10 @@ public class ShoppingCart {
 
     private final List<ProductQuantity> items = new ArrayList<>();
     Map<Product, Double> productQuantities = new HashMap<>();
-    private Discount discount;
     private int x = 1;
     private int quantityAsInt;
+    private double quantity;
+    private double unitPrice;
 
 
 
@@ -36,59 +37,42 @@ public class ShoppingCart {
 
     void handleOffers(Receipt receipt, Map<Product, Offer> offers, SupermarketCatalog catalog) {
         for (Product p: productQuantities().keySet()) {
-            double quantity = productQuantities.get(p);
             if (offers.containsKey(p)) {
                 Offer offer = offers.get(p);
-                double unitPrice = catalog.getUnitPrice(p);
-               this.quantityAsInt = (int) quantity;
-
                 Optional<SpecialOfferType> possibleSpecialOfferType = SpecialOfferType.findByCommand(offer.getOfferType());
-
-                if(possibleSpecialOfferType.isPresent()){
-                    this.x = possibleSpecialOfferType.get().getOfferNumber();
-                    if(quantityAsInt >= 2){
-                        discount = new Discount(p, "2 for " + offer.getArgument(), -calcDiscountN(quantity,unitPrice,offer.getArgument()));
-                    }
+                if(possibleSpecialOfferType.isPresent()) {
+                    SpecialOfferType specialOfferType = possibleSpecialOfferType.get();
+                    setQuantities(p,catalog);
+                    setX(specialOfferType);
+                    Discount discount = createDiscount(p, specialOfferType, offer);
+                    if (discount != null)
+                        receipt.addDiscount(discount);
                 }
-                if (offer.getOfferType() == SpecialOfferType.ThreeForTwo && quantityAsInt > 2) {
-                    discount = new Discount(p, "3 for 2", -calcDiscountAmount(quantity,unitPrice));
-                }
-                if (offer.getOfferType() == SpecialOfferType.TenPercentDiscount) {
-                    discount = new Discount(p, offer.getArgument() + "% off", calcDiscountBla(quantity,unitPrice,offer.getArgument()));
-                }
-                if (offer.getOfferType() == SpecialOfferType.FiveForAmount && quantityAsInt >= 5) {
-                    double discountTotal = calcDiscountTotal(quantity,unitPrice,offer.getArgument());
-                    discount = new Discount(p, x + " for " + offer.getArgument(), -discountTotal);
-                }
-                if (discount != null)
-                    receipt.addDiscount(discount);
             }
-
         }
     }
 
-    private double calcDiscountN(double quantity, double unitPrice, double argument){
-        double total = argument * calcNumberOfXs() + quantityAsInt % 2 * unitPrice;
-        return unitPrice * quantity - total;
+    public void setQuantities(Product product, SupermarketCatalog catalog){
+        this.unitPrice = catalog.getUnitPrice(product);
+        this.quantity = productQuantities.get(product);
+        this.quantityAsInt = (int) this.quantity;
     }
 
-    private double calcDiscountBla(double quantity, double unitPrice, double argument){
-        return -quantity * unitPrice * argument / 100.0;
-
+    public void setX(SpecialOfferType specialOfferType){
+        this.x = specialOfferType.getOfferNumber();
     }
 
-    private double calcDiscountTotal(double quantity, double unitPrice, double argument){
-        int calcNumberOfXs = calcNumberOfXs();
-        return unitPrice * quantity - (argument * calcNumberOfXs + quantityAsInt % 5 * unitPrice);
+    public Discount createDiscount(Product product, SpecialOfferType specialOfferType, Offer offer){
+        CalcDiscount calcDiscount = createCalcDiscount(quantity, offer.getArgument());
+        String description = specialOfferType.getDescriptionPersonalize(offer.getOfferType(), offer.getArgument());
+
+        if(SpecialOfferType.hasOfferNumber(quantityAsInt,offer.getOfferType())){
+         return new Discount(product,description,specialOfferType.execute(calcDiscount));
+        }
+        return null;
     }
 
-    private double calcDiscountAmount(double quantity, double unitPrice){
-        int calcNumberOfXs = calcNumberOfXs();
-        return quantity * unitPrice - ((calcNumberOfXs * 2 * unitPrice) + quantityAsInt % 3 * unitPrice);
+    public CalcDiscount createCalcDiscount(double quantity, double argument){
+        return new CalcDiscount(quantity, unitPrice, argument, this.x, quantityAsInt);
     }
-
-    public int calcNumberOfXs(){
-        return this.quantityAsInt / x;
-    }
-
 }
